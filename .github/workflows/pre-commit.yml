@@ -11,4 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
+        with:
+          python-version: '3.13'
+      # Terraform install step
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.0
       - uses: pre-commit/action@v3.0.0
