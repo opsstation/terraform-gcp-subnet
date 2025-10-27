@@ -319,3 +319,9 @@ variable "log_filter" {
   default     = "ALL"
   description = "Log filtering option (ERRORS_ONLY, TRANSLATIONS_ONLY, ALL)."
 }
+
+variable "subnet_type" {
+  description = "Type of subnet: public or private"
+  type        = list(string)
+  default     = ["private"]  # default single private subnet
+}

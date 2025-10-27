@@ -30,9 +30,10 @@ resource "google_compute_subnetwork" "subnetwork" {
   stack_type    = var.stack_type
   ip_cidr_range = var.multiple_subnets == true ? var.ip_cidr_range[count.index] : var.ip_cidr_range[0]
 
-  ipv6_access_type           = var.stack_type == "IPV4_ONLY" ? null : var.ipv6_access_type
-  private_ip_google_access   = var.private_ip_google_access == true ? true : false
+  # Public/Private logic
+  private_ip_google_access   = var.subnet_type[count.index] == "private" ? true : false
   private_ipv6_google_access = var.private_ipv6_google_access == true ? true : "DISABLE_GOOGLE_ACCESS"
+  ipv6_access_type           = var.stack_type == "IPV4_ONLY" ? null : var.ipv6_access_type
 
   dynamic "secondary_ip_range" {
     for_each = var.multiple_subnets == true && contains(keys(var.secondary_ip_ranges), var.name[count.index]) ? var.secondary_ip_ranges[var.name[count.index]] : []
@@ -88,8 +89,8 @@ resource "google_compute_route" "route" {
 ##### Router resource
 #####==============================================================================
 resource "google_compute_router" "router" {
-  count       = var.multiple_subnets == true ? length(var.name) : 1
-  name        = var.multiple_subnets == true ? format("%s-router", module.labels[count.index].id) : format("%s-router", module.labels[0].id)
+  count       = 1
+  name        = format("%s-router", module.labels[0].id)
   project     = data.google_client_config.current.project
   region      = var.region
   network     = var.network
@@ -113,8 +114,9 @@ resource "google_compute_router" "router" {
   encrypted_interconnect_router = var.encrypted_interconnect_router == true ? true : false
 }
 
+
 #####==============================================================================
-##### Address resource
+##### Address resource (External IPs for public subnets)
 #####==============================================================================
 resource "google_compute_address" "address" {
   count        = var.address_enabled == true ? (var.multiple_subnets == true ? length(var.name) : 1) : 0
@@ -122,46 +124,54 @@ resource "google_compute_address" "address" {
   ip_version   = var.ip_version
   project      = data.google_client_config.current.project
   region       = var.region
-  address      = length(var.address) > 0 ? (var.multiple_subnets == true ? element(var.address, count.index) : element(var.address, 0)) : null
-  address_type = var.address_type
+  address_type = var.subnet_type[count.index] == "public" ? "EXTERNAL" : "INTERNAL"
   labels       = var.labels
   description  = try(element(var.description, count.index), null)
 
-  network    = var.address_type == "INTERNAL" ? var.network : null
-  subnetwork = var.address_type == "INTERNAL" ? (var.multiple_subnets == true ? var.subnetwork : var.subnetwork[0]) : null
-  purpose    = var.address_type == "INTERNAL" ? var.purpose : null
+  network    = var.subnet_type[count.index] == "private" ? var.network : null
+  subnetwork = var.subnet_type[count.index] == "private" ? (var.multiple_subnets == true ? var.subnetwork : var.subnetwork[0]) : null
+  purpose    = var.subnet_type[count.index] == "private" ? var.purpose : null
 
   ipv6_endpoint_type = var.ip_version == "IPV6" ? var.ipv6_endpoint_type : null
-  network_tier       = var.address_type == "EXTERNAL" ? var.network_tier : null
+  network_tier       = var.subnet_type[count.index] == "public" ? var.network_tier : null
 }
 
 #####==============================================================================
-##### NAT resource
+##### NAT resource (only for private subnets)
 #####==============================================================================
 resource "google_compute_router_nat" "nat" {
-  count                  = var.multiple_subnets == true ? length(var.name) : 1
-  name                   = var.multiple_subnets == true ? format("%s-router-nat", module.labels[count.index].id) : format("%s-router-nat", module.labels[0].id)
-  router                 = google_compute_router.router[count.index].name
+  name                   = "${module.labels[0].id}-router-nat"
+  router                 = google_compute_router.router[0].name
   region                 = var.region
   project                = data.google_client_config.current.project
   nat_ip_allocate_option = var.nat_ip_allocate_option
 
-  nat_ips                            = var.nat_ip_allocate_option == "MANUAL_ONLY" && var.address_enabled == true ? compact([google_compute_address.address[count.index].self_link]) : []
-  drain_nat_ips                      = var.drain_nat_ips
-  source_subnetwork_ip_ranges_to_nat = var.source_subnetwork_ip_ranges_to_nat
-  udp_idle_timeout_sec               = var.udp_idle_timeout_sec
-  icmp_idle_timeout_sec              = var.icmp_idle_timeout_sec
-  tcp_established_idle_timeout_sec   = var.tcp_established_idle_timeout_sec
-  tcp_transitory_idle_timeout_sec    = var.tcp_transitory_idle_timeout_sec
-  tcp_time_wait_timeout_sec          = var.tcp_time_wait_timeout_sec
+  nat_ips = var.nat_ip_allocate_option == "MANUAL_ONLY" && var.address_enabled == true ? [for addr in google_compute_address.address : addr.self_link] : []
+
+  drain_nat_ips                    = var.drain_nat_ips
+  source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
+
+  udp_idle_timeout_sec             = var.udp_idle_timeout_sec
+  icmp_idle_timeout_sec            = var.icmp_idle_timeout_sec
+  tcp_established_idle_timeout_sec = var.tcp_established_idle_timeout_sec
+  tcp_transitory_idle_timeout_sec  = var.tcp_transitory_idle_timeout_sec
+  tcp_time_wait_timeout_sec        = var.tcp_time_wait_timeout_sec
 
   log_config {
-    enable = var.log_enable == true ? true : false
+    enable = var.log_enable
     filter = var.log_filter
   }
 
-  subnetwork {
-    name                    = google_compute_subnetwork.subnetwork[count.index].self_link
-    source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
+  dynamic "subnetwork" {
+    for_each = {
+      for i, t in var.subnet_type :
+      i => google_compute_subnetwork.subnetwork[i]
+      if t == "private"
+    }
+    content {
+      name                    = subnetwork.value.self_link
+      source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
+    }
   }
 }
+

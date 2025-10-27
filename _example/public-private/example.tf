@@ -17,7 +17,7 @@ module "vpc" {
 module "subnet" {
   source           = "../.."
   name             = ["subnet-public-1", "subnet-public-2", "subnet-public-3", "subnet-private-1", "subnet-private-2", "subnet-private-3"]
-  environment      = "test"
+  environment      = "nonprod"
   region           = "asia-northeast1"
   subnet_type      = ["public", "public", "public", "private", "private", "private"]
   network          = module.vpc.vpc_id

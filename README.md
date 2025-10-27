@@ -17,7 +17,7 @@ This Terraform module creates structured subnet for GCP resources with specific 
 - Use the module by referencing its source and providing the required variables.
 ## Examples:
 
-## Example: single-subnet
+## Example: single
 
 
 ```hcl
@@ -39,16 +39,17 @@ module "subnet" {
 }
 ```
 
-## Example: multiple-subnet
+## Example: public-private
 
 ```hcl
 module "subnet" {
-  source           = "git::https://github.com/opsstation/terraform-gcp-subnet.git?ref=v1.0.1"
-  name             = ["subnet-a", "subnet-b"]
-  environment      = "test"
+  source           = "../.."
+  name             = ["subnet-public-1", "subnet-public-2", "subnet-public-3", "subnet-private-1", "subnet-private-2", "subnet-private-3"]
+  environment      = "nonprod"
   region           = "asia-northeast1"
+  subnet_type      = ["public", "public", "public", "private", "private", "private"]
   network          = module.vpc.vpc_id
-  ip_cidr_range    = ["10.10.1.0/24", "10.10.5.0/24"]
+  ip_cidr_range    = ["10.10.1.0/24", "10.10.2.0/24", "10.10.3.0/24", "10.10.4.0/24", "10.10.5.0/24", "10.10.6.0/24"]
   multiple_subnets = true
   log_config = {
     enable               = true
