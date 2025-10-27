@@ -1,9 +1,9 @@
 # 1. General Information and Identifiers
 variable "name" {
-  type        = list(string)
-  default     = []
-  description = "The names of the subnets."
+  description = "List of subnet names"
+  type        = any
 }
+
 
 variable "multiple_subnets" {
   type        = bool

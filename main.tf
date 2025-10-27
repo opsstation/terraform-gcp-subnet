@@ -1,12 +1,12 @@
 module "labels" {
-  source      = "git::git@github.com:opsstation/terraform-gcp-labels.git?ref=update/module"
-  count       = length(var.name) > 0 ? length(var.name) : 0
-  name        = var.name[count.index]
+  source      = "opsstation/labels/multicloud"
+  version     = "1.0.0"
+  count = var.multiple_subnets == true ? length(var.name) : 1
+  name  = var.multiple_subnets == true ? var.name[count.index] : var.name[0]
   environment = var.environment
   label_order = var.label_order
   managedby   = var.managedby
   repository  = var.repository
-  extra_tags  = var.extra_tags
 }
 
 
