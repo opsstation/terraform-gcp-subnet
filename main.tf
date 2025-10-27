@@ -1,8 +1,8 @@
 module "labels" {
   source      = "opsstation/labels/multicloud"
   version     = "1.0.0"
-  count = var.multiple_subnets == true ? length(var.name) : 1
-  name  = var.multiple_subnets == true ? var.name[count.index] : var.name[0]
+  count       = var.multiple_subnets == true ? length(var.name) : 1
+  name        = var.multiple_subnets == true ? var.name[count.index] : var.name[0]
   environment = var.environment
   label_order = var.label_order
   managedby   = var.managedby

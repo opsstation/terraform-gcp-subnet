@@ -15,7 +15,7 @@ module "vpc" {
 
 #===============================(subnet)=================================
 module "subnet" {
-  source           = "../.."
+  source = "../.."
   name = [
     "subnet-public-1",
     "subnet-public-2",

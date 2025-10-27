@@ -93,7 +93,7 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_labels"></a> [labels](#module\_labels) | git::git@github.com:opsstation/terraform-gcp-labels.git | update/module |
+| <a name="module_labels"></a> [labels](#module\_labels) | opsstation/labels/multicloud | 1.0.0 |
 
 ## Resources
 
@@ -120,7 +120,6 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 | <a name="input_drain_nat_ips"></a> [drain\_nat\_ips](#input\_drain\_nat\_ips) | A list of URLs of the IP resources to be drained. These IPs must be valid static external IPs that have been assigned to the NAT. | `list(string)` | `[]` | no |
 | <a name="input_encrypted_interconnect_router"></a> [encrypted\_interconnect\_router](#input\_encrypted\_interconnect\_router) | Indicates if the router is dedicated for encrypted VLAN attachments. | `bool` | `true` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment (e.g., `prod`, `dev`, `staging`). | `string` | `""` | no |
-| <a name="input_extra_tags"></a> [extra\_tags](#input\_extra\_tags) | Additional tags for the resource. | `map(string)` | `{}` | no |
 | <a name="input_icmp_idle_timeout_sec"></a> [icmp\_idle\_timeout\_sec](#input\_icmp\_idle\_timeout\_sec) | Timeout for ICMP connections (in seconds). | `number` | `30` | no |
 | <a name="input_ip_cidr_range"></a> [ip\_cidr\_range](#input\_ip\_cidr\_range) | The range of internal addresses owned by this subnetwork. | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | <a name="input_ip_version"></a> [ip\_version](#input\_ip\_version) | IP version (IPV4 or IPV6). | `string` | `"IPV4"` | no |
@@ -134,7 +133,7 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 | <a name="input_managedby"></a> [managedby](#input\_managedby) | ManagedBy, opsstation. | `string` | `"opsstation"` | no |
 | <a name="input_module_timeouts"></a> [module\_timeouts](#input\_module\_timeouts) | Timeout configurations for operations. | `any` | `{}` | no |
 | <a name="input_multiple_subnets"></a> [multiple\_subnets](#input\_multiple\_subnets) | Set true for multiple subnets, false for single subnet | `bool` | `false` | no |
-| <a name="input_name"></a> [name](#input\_name) | The names of the subnets. | `list(string)` | `[]` | no |
+| <a name="input_name"></a> [name](#input\_name) | List of subnet names | `any` | n/a | yes |
 | <a name="input_nat_ip_allocate_option"></a> [nat\_ip\_allocate\_option](#input\_nat\_ip\_allocate\_option) | Specifies how NAT IPs should be allocated. Options are AUTO\_ONLY or MANUAL\_ONLY. | `string` | `"AUTO_ONLY"` | no |
 | <a name="input_network"></a> [network](#input\_network) | The VPC network the subnets belong to. | `string` | `""` | no |
 | <a name="input_network_tier"></a> [network\_tier](#input\_network\_tier) | Networking tier (PREMIUM or STANDARD). | `string` | `"PREMIUM"` | no |

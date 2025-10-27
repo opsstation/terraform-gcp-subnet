@@ -36,12 +36,6 @@ variable "label_order" {
   description = "Order of labels for organizing resources."
 }
 
-variable "extra_tags" {
-  type        = map(string)
-  default     = {}
-  description = "Additional tags for the resource."
-}
-
 variable "environment" {
   type        = string
   default     = ""
