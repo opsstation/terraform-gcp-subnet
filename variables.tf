@@ -299,5 +299,5 @@ variable "log_filter" {
 variable "subnet_type" {
   description = "Type of subnet: public or private"
   type        = list(string)
-  default     = ["private"]  # default single private subnet
+  default     = ["private"] # default single private subnet
 }

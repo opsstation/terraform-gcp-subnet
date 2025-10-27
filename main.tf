@@ -148,7 +148,7 @@ resource "google_compute_router_nat" "nat" {
 
   nat_ips = var.nat_ip_allocate_option == "MANUAL_ONLY" && var.address_enabled == true ? [for addr in google_compute_address.address : addr.self_link] : []
 
-  drain_nat_ips                    = var.drain_nat_ips
+  drain_nat_ips                      = var.drain_nat_ips
   source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
 
   udp_idle_timeout_sec             = var.udp_idle_timeout_sec
