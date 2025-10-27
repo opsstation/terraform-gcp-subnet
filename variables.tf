@@ -94,12 +94,6 @@ variable "stack_type" {
   description = "Stack type (e.g., IPV4_ONLY, IPV6_ONLY, IPV4_IPV6)."
 }
 
-variable "private_ip_google_access" {
-  type        = bool
-  default     = true
-  description = "Enable private IP Google access for the subnetwork."
-}
-
 variable "private_ipv6_google_access" {
   type        = bool
   default     = false
@@ -144,12 +138,6 @@ variable "nat_ip_allocate_option" {
   description = "Specifies how NAT IPs should be allocated. Options are AUTO_ONLY or MANUAL_ONLY."
   type        = string
   default     = "AUTO_ONLY"
-}
-
-variable "source_subnetwork_ip_ranges_to_nat" {
-  type        = string
-  default     = "LIST_OF_SUBNETWORKS"
-  description = "NAT configuration per subnetwork."
 }
 
 variable "address_enabled" {
@@ -246,18 +234,6 @@ variable "encrypted_interconnect_router" {
   description = "Indicates if the router is dedicated for encrypted VLAN attachments."
 }
 
-# 8. Address Configuration
-variable "address" {
-  type        = list(string)
-  default     = []
-  description = "List of addresses."
-}
-
-variable "address_type" {
-  type        = string
-  default     = "EXTERNAL"
-  description = "Type of address to reserve (INTERNAL or EXTERNAL)."
-}
 
 variable "network_tier" {
   type        = string

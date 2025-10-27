@@ -110,9 +110,7 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_address"></a> [address](#input\_address) | List of addresses. | `list(string)` | `[]` | no |
 | <a name="input_address_enabled"></a> [address\_enabled](#input\_address\_enabled) | Enable or disable address functionality. | `bool` | `false` | no |
-| <a name="input_address_type"></a> [address\_type](#input\_address\_type) | Type of address to reserve (INTERNAL or EXTERNAL). | `string` | `"EXTERNAL"` | no |
 | <a name="input_asn"></a> [asn](#input\_asn) | Local BGP Autonomous System Number (ASN). | `number` | `64514` | no |
 | <a name="input_bgp_advertise_mode"></a> [bgp\_advertise\_mode](#input\_bgp\_advertise\_mode) | BGP advertisement mode (DEFAULT or CUSTOM). | `string` | `"CUSTOM"` | no |
 | <a name="input_bgp_advertised_groups"></a> [bgp\_advertised\_groups](#input\_bgp\_advertised\_groups) | List of prefix groups to advertise in custom mode. | `list(string)` | `[]` | no |
@@ -140,7 +138,6 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 | <a name="input_nat_ip_allocate_option"></a> [nat\_ip\_allocate\_option](#input\_nat\_ip\_allocate\_option) | Specifies how NAT IPs should be allocated. Options are AUTO\_ONLY or MANUAL\_ONLY. | `string` | `"AUTO_ONLY"` | no |
 | <a name="input_network"></a> [network](#input\_network) | The VPC network the subnets belong to. | `string` | `""` | no |
 | <a name="input_network_tier"></a> [network\_tier](#input\_network\_tier) | Networking tier (PREMIUM or STANDARD). | `string` | `"PREMIUM"` | no |
-| <a name="input_private_ip_google_access"></a> [private\_ip\_google\_access](#input\_private\_ip\_google\_access) | Enable private IP Google access for the subnetwork. | `bool` | `true` | no |
 | <a name="input_private_ipv6_google_access"></a> [private\_ipv6\_google\_access](#input\_private\_ipv6\_google\_access) | Enable private IPv6 Google access for the subnetwork. | `bool` | `false` | no |
 | <a name="input_purpose"></a> [purpose](#input\_purpose) | Purpose of the resource (e.g., PRIVATE\_RFC\_1918, PRIVATE\_SERVICE\_CONNECT). | `string` | `""` | no |
 | <a name="input_region"></a> [region](#input\_region) | Google Cloud region for the subnetwork. | `string` | `""` | no |
@@ -148,8 +145,8 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 | <a name="input_router_enabled"></a> [router\_enabled](#input\_router\_enabled) | Enable or disable the router. | `bool` | `true` | no |
 | <a name="input_routes"></a> [routes](#input\_routes) | Map of routes to be created | <pre>map(object({<br>    description            = string<br>    tags                   = string<br>    destination_range      = string<br>    next_hop_internet      = string<br>    next_hop_ip            = string<br>    next_hop_instance      = string<br>    next_hop_instance_zone = string<br>    next_hop_vpn_tunnel    = string<br>    next_hop_ilb           = string<br>    priority               = number<br>  }))</pre> | <pre>{<br>  "route": {<br>    "description": "Subnet route to example",<br>    "destination_range": "0.0.0.0/0",<br>    "next_hop_ilb": null,<br>    "next_hop_instance": null,<br>    "next_hop_instance_zone": null,<br>    "next_hop_internet": "true",<br>    "next_hop_ip": null,<br>    "next_hop_vpn_tunnel": null,<br>    "priority": 1000,<br>    "tags": "test1 , test2"<br>  }<br>}</pre> | no |
 | <a name="input_secondary_ip_ranges"></a> [secondary\_ip\_ranges](#input\_secondary\_ip\_ranges) | Secondary IP ranges for the subnetwork. | <pre>map(list(object({<br>    range_name    = string<br>    ip_cidr_range = string<br>  })))</pre> | `{}` | no |
-| <a name="input_source_subnetwork_ip_ranges_to_nat"></a> [source\_subnetwork\_ip\_ranges\_to\_nat](#input\_source\_subnetwork\_ip\_ranges\_to\_nat) | NAT configuration per subnetwork. | `string` | `"LIST_OF_SUBNETWORKS"` | no |
 | <a name="input_stack_type"></a> [stack\_type](#input\_stack\_type) | Stack type (e.g., IPV4\_ONLY, IPV6\_ONLY, IPV4\_IPV6). | `string` | `"IPV4_ONLY"` | no |
+| <a name="input_subnet_type"></a> [subnet\_type](#input\_subnet\_type) | Type of subnet: public or private | `list(string)` | <pre>[<br>  "private"<br>]</pre> | no |
 | <a name="input_subnetwork"></a> [subnetwork](#input\_subnetwork) | URL of the subnetwork to reserve the address in. | `string` | `null` | no |
 | <a name="input_tcp_established_idle_timeout_sec"></a> [tcp\_established\_idle\_timeout\_sec](#input\_tcp\_established\_idle\_timeout\_sec) | Timeout for TCP established connections (in seconds). | `number` | `1200` | no |
 | <a name="input_tcp_time_wait_timeout_sec"></a> [tcp\_time\_wait\_timeout\_sec](#input\_tcp\_time\_wait\_timeout\_sec) | Timeout for TCP connections in TIME\_WAIT state (in seconds). | `number` | `120` | no |
