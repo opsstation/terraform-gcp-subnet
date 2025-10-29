@@ -5,13 +5,18 @@ provider "google" {
 }
 
 module "vpc" {
-  source                                    = "git::git@github.com:opsstation/terraform-gcp-vpc.git?ref=feat/release-1"
-  name                                      = "dev"
-  environment                               = "test"
+  source                                    = "opsstation/vpc/gcp"
+  version                                   = "1.0.1"
+  name                                      = "vpc"
+  environment                               = "OpsStation"
+  label_order                               = ["name", "environment"]
+  mtu                                       = 1460
   routing_mode                              = "REGIONAL"
-  mtu                                       = 1500
-  network_firewall_policy_enforcement_order = "BEFORE_CLASSIC_FIREWALL"
+  network_enabled                           = true
+  network_firewall_policy_enforcement_order = "AFTER_CLASSIC_FIREWALL"
+  delete_default_routes_on_create           = false
 }
+
 
 #===============================(subnet)=================================
 module "subnet" {

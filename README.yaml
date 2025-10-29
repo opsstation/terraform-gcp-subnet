@@ -1,0 +1,112 @@
+---
+#
+# This is the canonical configuration for the `README.md`
+# Run `make readme` to rebuild the `README.md`
+
+# Name of this project
+name: Terraform GCP Subnet
+
+# License of this project
+license: "APACHE"
+
+# Canonical GitHub repo
+github_repo: opsstation/terraform-gcp-Subnet
+
+# Badges to display
+badges:
+  - name: "Latest Release"
+    image: "https://img.shields.io/github/release/opsstation/terraform-gcp-subnet.svg"
+    url: "https://github.com/opsstation/terraform-gcp-subnet/releases/latest"
+  - name: "tfsec"
+    image: "https://github.com/opsstation/terraform-gcp-subnet/actions/workflows/tfsec.yml/badge.svg"
+    url: "https://github.com/opsstation/terraform-gcp-subnet/actions/workflows/tfsec.yml"
+  - name: "Licence"
+    image: "https://img.shields.io/badge/License-APACHE-blue.svg"
+    url: "LICENSE.md"
+  - name: "Changelog"
+    image: "https://img.shields.io/badge/Changelog-blue"
+    url: "CHANGELOG.md"
+
+prerequesties:
+  - name: Terraform
+    url: https://learn.hashicorp.com/terraform/getting-started/install.html
+    version: ">= 1.6.6"
+
+providers:
+  - name: google
+    url: https://registry.terraform.io/providers/hashicorp/google
+    version: ">= 5.31.0"
+
+
+module_dependencies:
+  - name: Labels Module
+    url: https://github.com/opsstation/terraform-multicloud-labels
+    description: Provides resource tagging.
+
+  - name: vpc Module
+    url: https://github.com/opsstation/terraform-gcp-vpc
+    description: Creates and manages subnet networks and subnets.
+
+#  description of this project
+description: |-
+  Terraform module subnet to create new modules using this as baseline
+
+# How to use this project
+usage: |-
+  Here are some examples of how you can use this module in your inventory structure:
+
+
+  ## Example: single
+
+
+    ```hcl
+   module "subnet" {
+   source        = "opsstation/subnet/gcp"
+   version       = "1.0.1"
+   name          = ["dev"]
+   environment   = "test"
+   region        = "asia-northeast1"
+   network       = module.subnet.subnet_id
+   ip_cidr_range = ["10.10.1.0/24"]
+   log_config = {
+   enable               = true
+   aggregation_interval = "INTERVAL_5_MIN"
+   flow_sampling        = 0.5
+   metadata             = "INCLUDE_ALL_METADATA"
+   metadata_fields      = []
+   filter_expr          = null
+   }
+   }
+   ```
+
+ ## Example: public-private
+
+  ```hcl
+  module "subnet" {
+  source           = "opsstation/subnet/gcp"
+  version          = "1.0.1"
+  name = [
+  "subnet-public-1",
+  "subnet-public-2",
+  "subnet-public-3",
+  "subnet-private-1",
+  "subnet-private-2",
+  "subnet-private-3"
+  ]
+  environment      = "nonprod"
+  region           = "asia-northeast1"
+  subnet_type      = ["public", "public", "public", "private", "private", "private"]
+  network          = module.subnet.subnet_id
+  ip_cidr_range    = ["10.10.1.0/24", "10.10.2.0/24", "10.10.3.0/24", "10.10.4.0/24", "10.10.5.0/24", "10.10.6.0/24"]
+  multiple_subnets = true
+  }
+  log_config = {
+  enable               = true
+  aggregation_interval = "INTERVAL_5_MIN"
+  flow_sampling        = 0.5
+  metadata             = "INCLUDE_ALL_METADATA"
+  metadata_fields      = []
+  filter_expr          = null
+  }
+  }
+  ```
