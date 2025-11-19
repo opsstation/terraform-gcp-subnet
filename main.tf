@@ -9,9 +9,22 @@ module "labels" {
   repository  = var.repository
 }
 
+data "google_client_config" "current" {}
 
-data "google_client_config" "current" {
+locals {
+  subnet_map = {
+    for i, sb in google_compute_subnetwork.subnetwork :
+    var.name[i] => sb.self_link
+  }
+  public_subnet_key = try(
+    [
+      for k in keys(local.subnet_map) : k
+      if contains(lower(k), "public")
+    ][0],
+    null
+  )
 }
+
 #####==============================================================================
 ##### Each VPC network is subdivided into subnets, and each subnet is contained
 ##### within a single region. You can have more than one subnet in a region for

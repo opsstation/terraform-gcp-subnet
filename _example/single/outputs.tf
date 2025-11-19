@@ -28,9 +28,14 @@ output "subnet_external_ipv6_prefix" {
   value       = module.subnet.subnet_external_ipv6_prefix
 }
 
-output "subnet_self_link" {
-  description = "The self-link of the GCP subnetwork."
-  value       = module.subnet.subnet_self_link
+output "subnet_self_link_public" {
+  description = "The self-link of the GCP public subnetwork."
+  value       = module.subnet.subnet_self_link_public
+}
+
+output "subnet_self_link_priavte" {
+  description = "The self-link of the GCP priavte subnetwork."
+  value       = module.subnet.subnet_self_link_private
 }
 
 output "route_id" {

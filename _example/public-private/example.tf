@@ -29,10 +29,9 @@ module "subnet" {
     "subnet-private-2",
     "subnet-private-3"
   ]
-  environment      = "nonprod"
-  region           = "asia-northeast1"
-  subnet_type      = ["public", "public", "public", "private", "private", "private"]
-  network          = module.vpc.vpc_id
-  ip_cidr_range    = ["10.10.1.0/24", "10.10.2.0/24", "10.10.3.0/24", "10.10.4.0/24", "10.10.5.0/24", "10.10.6.0/24"]
-  multiple_subnets = true
+  environment   = "nonprod"
+  region        = "asia-northeast1"
+  subnet_type   = ["public", "public", "public", "private", "private", "private"]
+  network       = module.vpc.vpc_id
+  ip_cidr_range = ["10.10.1.0/24", "10.10.2.0/24", "10.10.3.0/24", "10.10.4.0/24", "10.10.5.0/24", "10.10.6.0/24"]
 }

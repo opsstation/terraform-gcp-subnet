@@ -4,6 +4,20 @@ output "subnet_id" {
   value       = join("", google_compute_subnetwork.subnetwork[*].id)
 }
 
+output "subnet_self_link_private" {
+  description = "The self-link of the GCP private subnetwork."
+  value       = length(google_compute_subnetwork.subnetwork) > 1 ? google_compute_subnetwork.subnetwork[1].self_link : null
+}
+
+output "subnet_self_link_public" {
+  description = "The self-link of the GCP public subnetwork."
+  value = (
+    local.public_subnet_key != null
+    ? local.subnet_map[local.public_subnet_key]
+    : google_compute_subnetwork.subnetwork[0].self_link
+  )
+}
+
 output "subnet_name" {
   description = "The name of the GCP subnetwork."
   value       = join("", google_compute_subnetwork.subnetwork[*].name)
@@ -29,10 +43,6 @@ output "subnet_external_ipv6_prefix" {
   value       = join("", google_compute_subnetwork.subnetwork[*].external_ipv6_prefix)
 }
 
-output "subnet_self_link" {
-  description = "The self-link of the GCP subnetwork."
-  value       = join("", google_compute_subnetwork.subnetwork[*].self_link)
-}
 
 # Outputs for google_compute_route
 output "route_id" {

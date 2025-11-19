@@ -7,7 +7,7 @@ variable "name" {
 
 variable "multiple_subnets" {
   type        = bool
-  default     = false
+  default     = true
   description = "Set true for multiple subnets, false for single subnet"
 }
 
