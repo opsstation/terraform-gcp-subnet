@@ -55,7 +55,7 @@ module "subnet" {
   name          = ["dev"]
   environment   = "test"
   region        = "asia-northeast1"
-  network       = module.vpc.Subnet_id
+  network       = module.vpc.vpc_id
   ip_cidr_range = ["10.10.1.0/24"]
   log_config = {
     enable               = true
@@ -85,7 +85,7 @@ module "subnet" {
   environment      = "nonprod"
   region           = "asia-northeast1"
   subnet_type      = ["public", "public", "public", "private", "private", "private"]
-  network          = module.vpc.Subnet_id
+  network          = module.vpc.vpc_id
   ip_cidr_range    = ["10.10.1.0/24", "10.10.2.0/24", "10.10.3.0/24", "10.10.4.0/24", "10.10.5.0/24", "10.10.6.0/24"]
   multiple_subnets = true
 }
