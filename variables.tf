@@ -1,19 +1,20 @@
-variable "subnet_names" {
-  type        = list(string)
-  default     = []
-  description = " The name of the resource, provided by the client when initially creating the resource."
+# 1. General Information and Identifiers
+variable "name" {
+  description = "List of subnet names"
+  type        = any
 }
 
-variable "environment" {
+
+variable "multiple_subnets" {
+  type        = bool
+  default     = true
+  description = "Set true for multiple subnets, false for single subnet"
+}
+
+variable "network" {
   type        = string
   default     = ""
-  description = "Environment (e.g. `prod`, `dev`, `staging`)."
-}
-
-variable "label_order" {
-  type        = list(any)
-  default     = ["name", "environment"]
-  description = "Label order, e.g. sequence of application name and environment `name`,`environment`,'attribute' [`webserver`,`qa`,`devops`,`public`,] ."
+  description = "The VPC network the subnets belong to."
 }
 
 variable "repository" {
@@ -28,158 +29,269 @@ variable "managedby" {
   description = "ManagedBy, opsstation."
 }
 
-variable "name" {
-  type        = string
-  default     = "test1"
-  description = " The name of the resource, provided by the client when initially creating the resource."
+# 2. Tags and Labels
+variable "label_order" {
+  type        = list(string)
+  default     = ["name", "environment"]
+  description = "Order of labels for organizing resources."
 }
 
-variable "network" {
+variable "environment" {
   type        = string
   default     = ""
-  description = "(Required) The VPC network the subnets belong to. Only networks that are in the distributed mode can have subnetworks."
+  description = "Environment (e.g., `prod`, `dev`, `staging`)."
 }
 
-variable "private_ip_google_access" {
-  type        = bool
-  default     = true
-  description = "(Optional) When enabled, VMs in this subnetwork without external IP addresses can access Google APIs and services by using Private Google Access."
-}
-
+# 3. Subnetwork Configuration
 variable "ip_cidr_range" {
   type        = list(string)
   default     = [""]
-  description = "(Required) The range of internal addresses that are owned by this subnetwork. Provide this property when you create the subnetwork. For example, 10.0.0.0/8 or 192.168.0.0/16. Ranges must be unique and non-overlapping within a network. Only IPv4 is supported."
+  description = "The range of internal addresses owned by this subnetwork."
 }
 
 variable "secondary_ip_ranges" {
-  type        = any
-  default     = []
-  description = "An array of configurations for secondary IP ranges for VM instances contained in this subnetwork. The primary IP of such VM must belong to the primary ipCidrRange of the subnetwork. The alias IPs may belong to either primary or secondary ranges."
-}
-
-variable "log_config" {
-  type        = any
-  default     = null
-  description = "(Optional) Logging options for the subnetwork flow logs. Setting this value to 'null' will disable them. See https://www.terraform.io/docs/providers/google/r/compute_subnetwork.html for more information and examples."
-}
-
-variable "enabled" {
-  type        = bool
-  default     = true
-  description = "Toggle to enable or disable the main functionality."
-}
-
-variable "route_enabled" {
-  type        = bool
-  default     = true
-  description = "Toggle to enable or disable routing functionality."
-}
-
-variable "address_enabled" {
-  type        = bool
-  default     = true
-  description = "Toggle to enable or disable address functionality."
-}
-
-variable "router_nat_enabled" {
-  type        = bool
-  default     = true
-  description = "Toggle to enable or disable NAT functionality for the router."
-}
-
-variable "router_enabled" {
-  type        = bool
-  default     = true
-  description = "Toggle to enable or disable the router."
-}
-
-variable "module_timeouts" {
-  type        = any
+  type = map(list(object({
+    range_name    = string
+    ip_cidr_range = string
+  })))
   default     = {}
-  description = "(Optional) How long certain operations (per resource type) are allowed to take before being considered to have failed."
+  description = "Secondary IP ranges for the subnetwork."
 }
 
-variable "gcp_region" {
+variable "region" {
   type        = string
-  default     = "us-west1"
-  description = "Google Cloud region"
-}
-
-variable "dest_range" {
-  type        = string
-  default     = "0.0.0.0/0"
-  description = "The destination range of outgoing packets that this route applies to. Only IPv4 is supported."
-}
-
-variable "next_hop_gateway" {
-  type        = string
-  default     = "default-internet-gateway"
-  description = "URL to a gateway that should handle matching packets."
-}
-
-variable "priority" {
-  type        = number
-  default     = 1000
-  description = "The priority of this route."
-}
-
-variable "asn" {
-  type        = number
-  default     = 64514
-  description = "Local BGP Autonomous System Number (ASN). Must be an RFC6996 private ASN, either 16-bit or 32-bit."
-}
-
-variable "nat_ip_allocate_option" {
-  type        = string
-  default     = "MANUAL_ONLY"
-  description = "How external IPs should be allocated for this NAT."
-}
-
-variable "source_subnetwork_ip_ranges_to_nat" {
-  type        = string
-  default     = "ALL_SUBNETWORKS_ALL_IP_RANGES"
-  description = "How NAT should be configured per Subnetwork."
-}
-
-variable "filter" {
-  type        = string
-  default     = "ERRORS_ONLY"
-  description = "Specifies the desired filtering of logs on this NAT."
+  default     = ""
+  description = "Google Cloud region for the subnetwork."
 }
 
 variable "description" {
   type        = string
   default     = ""
-  description = "(Optional) An optional description of the VPC. The resource must be recreated to modify this field.Default is ''."
+  description = "Optional description of the VPC."
 }
 
 variable "purpose" {
   type        = string
   default     = ""
-  description = "- (Optional) The purpose of the resource. This field can be either PRIVATE_RFC_1918, REGIONAL_MANAGED_PROXY, GLOBAL_MANAGED_PROXY, or PRIVATE_SERVICE_CONNECT"
+  description = "Purpose of the resource (e.g., PRIVATE_RFC_1918, PRIVATE_SERVICE_CONNECT)."
 }
 
 variable "ipv6_access_type" {
   type        = string
   default     = "EXTERNAL"
-  description = "The access type of IPv6 address this subnet holds."
+  description = "IPv6 access type for the subnetwork."
+}
+
+variable "stack_type" {
+  type        = string
+  default     = "IPV4_ONLY"
+  description = "Stack type (e.g., IPV4_ONLY, IPV6_ONLY, IPV4_IPV6)."
+}
+
+variable "private_ipv6_google_access" {
+  type        = bool
+  default     = false
+  description = "Enable private IPv6 Google access for the subnetwork."
+}
+
+# 4. Logging and Timeout Configuration
+variable "log_config" {
+  description = "Logging options for subnetwork flow logs."
+  type = object({
+    enable               = optional(bool, false)
+    aggregation_interval = optional(string)
+    flow_sampling        = optional(number)
+    metadata             = optional(string)
+    metadata_fields      = optional(list(string))
+    filter_expr          = optional(string)
+  })
+  default = {
+    enable               = false
+    aggregation_interval = null
+    flow_sampling        = null
+    metadata             = null
+    metadata_fields      = []
+    filter_expr          = null
+  }
+}
+
+variable "module_timeouts" {
+  type        = any
+  default     = {}
+  description = "Timeout configurations for operations."
+}
+
+# 5. Router and NAT Configuration
+variable "router_enabled" {
+  type        = bool
+  default     = true
+  description = "Enable or disable the router."
+}
+
+variable "nat_ip_allocate_option" {
+  description = "Specifies how NAT IPs should be allocated. Options are AUTO_ONLY or MANUAL_ONLY."
+  type        = string
+  default     = "AUTO_ONLY"
+}
+
+variable "address_enabled" {
+  type        = bool
+  default     = false
+  description = "Enable or disable address functionality."
+}
+
+variable "asn" {
+  type        = number
+  default     = 64514
+  description = "Local BGP Autonomous System Number (ASN)."
 }
 
 variable "ip_version" {
   type        = string
   default     = "IPV4"
-  description = " (Optional) The IP Version that will be used by this address. The default value is IPV4. Possible values are: IPV4, IPV6."
+  description = "IP version (IPV4 or IPV6)."
 }
 
 variable "udp_idle_timeout_sec" {
   type        = number
   default     = 30
-  description = " (Optional) Timeout (in seconds) for UDP connections. Defaults to 30s if not set."
+  description = "Timeout for UDP connections (in seconds)."
 }
 
 variable "icmp_idle_timeout_sec" {
   type        = number
   default     = 30
-  description = " (Optional) Timeout (in seconds) for ICMP connections. Defaults to 30s if not set."
+  description = "Timeout for ICMP connections (in seconds)."
+}
+
+variable "routes" {
+  description = "Map of routes to be created"
+  type = map(object({
+    description            = string
+    tags                   = string
+    destination_range      = string
+    next_hop_internet      = string
+    next_hop_ip            = string
+    next_hop_instance      = string
+    next_hop_instance_zone = string
+    next_hop_vpn_tunnel    = string
+    next_hop_ilb           = string
+    priority               = number
+  }))
+
+  default = {
+    "route" = {
+      description            = "Subnet route to example"
+      tags                   = "test1 , test2"
+      destination_range      = "0.0.0.0/0" # This defines the destination for the static route
+      next_hop_internet      = "true"      # Use default internet gateway
+      next_hop_ip            = null        # Empty string as default
+      next_hop_instance      = null        # Empty string as default
+      next_hop_instance_zone = null        # Empty string as default
+      next_hop_vpn_tunnel    = null        # Empty string as default
+      next_hop_ilb           = null        # Empty string as default
+      priority               = 1000        # Priority for the route
+    }
+  }
+}
+
+variable "bgp_advertise_mode" {
+  type        = string
+  default     = "CUSTOM"
+  description = "BGP advertisement mode (DEFAULT or CUSTOM)."
+}
+
+variable "bgp_advertised_groups" {
+  type        = list(string)
+  default     = []
+  description = "List of prefix groups to advertise in custom mode."
+}
+
+variable "bgp_advertised_ip_ranges" {
+  type = list(object({
+    range       = string
+    description = string
+  }))
+  default     = []
+  description = "List of individual IP ranges to advertise in custom mode."
+}
+
+variable "bgp_keepalive_interval" {
+  type        = number
+  default     = 20
+  description = "Interval in seconds between BGP keepalive messages."
+}
+
+variable "encrypted_interconnect_router" {
+  type        = bool
+  default     = true
+  description = "Indicates if the router is dedicated for encrypted VLAN attachments."
+}
+
+
+variable "network_tier" {
+  type        = string
+  default     = "PREMIUM"
+  description = "Networking tier (PREMIUM or STANDARD)."
+}
+
+variable "subnetwork" {
+  type        = string
+  default     = null
+  description = "URL of the subnetwork to reserve the address in."
+}
+
+variable "ipv6_endpoint_type" {
+  type        = bool
+  default     = null
+  description = "Endpoint type of the address (VM or NETLB)."
+}
+
+variable "labels" {
+  type        = map(string)
+  default     = {} # Example key-value pair
+  description = "Labels to apply to the address."
+}
+
+# 9. NAT Configuration
+variable "drain_nat_ips" {
+  description = "A list of URLs of the IP resources to be drained. These IPs must be valid static external IPs that have been assigned to the NAT."
+  type        = list(string)
+  default     = []
+}
+
+variable "tcp_established_idle_timeout_sec" {
+  type        = number
+  default     = 1200
+  description = "Timeout for TCP established connections (in seconds)."
+}
+
+variable "tcp_transitory_idle_timeout_sec" {
+  type        = number
+  default     = 30
+  description = "Timeout for TCP transitory connections (in seconds)."
+}
+
+variable "tcp_time_wait_timeout_sec" {
+  type        = number
+  default     = 120
+  description = "Timeout for TCP connections in TIME_WAIT state (in seconds)."
+}
+
+variable "log_enable" {
+  type        = bool
+  default     = true
+  description = "Enable or disable logging for NAT."
+}
+
+variable "log_filter" {
+  type        = string
+  default     = "ALL"
+  description = "Log filtering option (ERRORS_ONLY, TRANSLATIONS_ONLY, ALL)."
+}
+
+variable "subnet_type" {
+  description = "Type of subnet: public or private"
+  type        = list(string)
+  default     = ["private"] # default single private subnet
 }
